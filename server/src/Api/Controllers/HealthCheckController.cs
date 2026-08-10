@@ -6,7 +6,7 @@ namespace Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class HealthCheckController : ControllerBase
+public class HealthCheckController : BaseController
 {
     private readonly IMediator _mediator;
 
@@ -16,8 +16,5 @@ public class HealthCheckController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetHealthCheck()
-    {
-        return Ok();
-    }
+    public async Task<IActionResult> GetHealthCheck() => Ok();
 }
