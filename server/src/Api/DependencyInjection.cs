@@ -1,6 +1,8 @@
+using System.Reflection;
 using System.Text.Json.Serialization;
 using Application;
 using Infrastructure;
+using Microsoft.OpenApi;
 
 namespace Api
 {
@@ -31,7 +33,35 @@ namespace Api
             });
 
             services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(c =>
+            {
+                var apiXmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var apiXmlPath = Path.Combine(AppContext.BaseDirectory, apiXmlFile);
+                if (File.Exists(apiXmlPath))
+                    c.IncludeXmlComments(apiXmlPath);
+
+                var applicationXmlPath = Path.Combine(AppContext.BaseDirectory, "Application.xml");
+                if (File.Exists(applicationXmlPath))
+                    c.IncludeXmlComments(applicationXmlPath);
+
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Description = "Access token JWT. Informe apenas o token, sem o prefixo \"Bearer \".",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT"
+                });
+
+                c.AddSecurityRequirement(_ => new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecuritySchemeReference("Bearer"),
+                        new List<string>()
+                    }
+                });
+            });
 
             services.AddApplication();
             services.AddInfrastructure(configuration);

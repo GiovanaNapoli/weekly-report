@@ -1,11 +1,13 @@
 
 using Domain.Entities;
 using Domain.Entities.Common;
+using Infrastructure.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Context
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
@@ -13,9 +15,8 @@ namespace Infrastructure.Context
         {
         }
 
-        public DbSet<User> Users { get; set; }
-        public DbSet<TodoTask> TodoTasks { get; set; }
-        public DbSet<TodoTaskStatus> TodoTaskStatus { get; set; }
+        public new DbSet<User> Users { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
